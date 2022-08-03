@@ -4,6 +4,7 @@ import ContactList from './ContactList';
 import 'react-native-get-random-values';
 import { nanoid } from 'nanoid';
 import { Component } from 'react';
+const LS_Key = 'contacts';
 
 export default class App extends Component {
   state = {
@@ -12,6 +13,20 @@ export default class App extends Component {
   };
 
   filtId = nanoid();
+
+  componentDidMount() {
+    const contactInf = localStorage.getItem(LS_Key);
+    const parsedCont = JSON.parse(contactInf);
+    if (parsedCont) {
+      this.setState({ contacts: parsedCont });
+    }
+  }
+
+  componentDidUpdate(_, prevState) {
+    if (this.state.contacts !== prevState.contacts) {
+      localStorage.setItem(LS_Key, JSON.stringify(this.state.contacts));
+    }
+  }
 
   handleFilterChange = event => {
     return this.setState({ filter: event.currentTarget.value });
